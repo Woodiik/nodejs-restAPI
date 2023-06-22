@@ -14,8 +14,10 @@ const register = async (req, res) => {
   const hashPassword = await bcrypt.hash(password, 10);
   const newUser = await User.create({ ...req.body, password: hashPassword });
   return res.status(201).json({
-    email: newUser.email,
-    subscription: newUser.subscription,
+    user: {
+      email: newUser.email,
+      subscription: newUser.subscription,
+    },
   });
 };
 
@@ -24,7 +26,7 @@ const login = async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    return res.status(401).json({ message: "Email or password is wrong" });
+    return res.status(400).json({ message: "Validation error" });
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password);
