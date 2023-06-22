@@ -1,0 +1,27 @@
+const validateBodyOnAuth = (schema) => {
+  const func = (req, res, next) => {
+    if (Object.keys(req.body).length === 0) {
+      return res.status(400).json({ message: "Missing fields" });
+    }
+
+    const { error } = schema.validate(req.body);
+    if (error) {
+      const errorMessage = error.details[0].message;
+
+      if (errorMessage.includes("email")) {
+        return res.status(400).json({ message: "Invalid email format" });
+      }
+
+      return res.status(400).json({
+        message: "Missing required fields or extra fields are present",
+      });
+    }
+
+    next();
+  };
+  return func;
+};
+
+module.exports = {
+  validateBodyOnAuth,
+};

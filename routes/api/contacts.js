@@ -1,4 +1,5 @@
 const express = require("express");
+
 const {
   addContact,
   deleteContact,
@@ -10,21 +11,23 @@ const {
 const {
   validateBody,
   isValidId,
-  isValidBodyOnPatch,
+  validateBodyOnPatch,
+  authenticate,
 } = require("../../middlewars");
 const { schemas } = require("../../models/contact");
 const router = express.Router();
 
-router.get("/", listContacts);
+router.get("/", authenticate, listContacts);
 
-router.get("/:contactId", isValidId, getById);
+router.get("/:contactId", authenticate, isValidId, getById);
 
-router.post("/", validateBody(schemas.addSchema), addContact);
+router.post("/", authenticate, validateBody(schemas.addSchema), addContact);
 
-router.delete("/:contactId", isValidId, deleteContact);
+router.delete("/:contactId", authenticate, isValidId, deleteContact);
 
 router.put(
   "/:contactId",
+  authenticate,
   isValidId,
   validateBody(schemas.addSchema),
   updateContact
@@ -32,8 +35,9 @@ router.put(
 
 router.patch(
   "/:contactId/favorite",
+  authenticate,
   isValidId,
-  isValidBodyOnPatch,
+  validateBodyOnPatch,
   updateStatusContact
 );
 
