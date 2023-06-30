@@ -24,14 +24,13 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-
   if (!user) {
-    return res.status(400).json({ message: "Validation error" });
+    return res.status(401).json({ message: "Email or password is wrong" });
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password);
 
-  if (!passwordCompare) {
+  if (!passwordCompare || !user) {
     return res.status(401).json({ message: "Email or password is wrong" });
   }
 
