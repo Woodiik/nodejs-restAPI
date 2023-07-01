@@ -1,4 +1,4 @@
-const isValidBodyOnPatch = (req, res, next) => {
+const validateBodyOnPatch = (req, res, next) => {
   if (Object.keys(req.body).length === 0) {
     return res.status(400).json({ message: "Missing field favorite" });
   }
@@ -19,4 +19,4 @@ const isValidBodyOnPatch = (req, res, next) => {
   next();
 };
 
-module.exports = isValidBodyOnPatch;
+module.exports = validateBodyOnPatch;

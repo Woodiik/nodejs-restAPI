@@ -11,6 +11,8 @@ const addSchema = Joi.object({
 const schemas = {
   addSchema,
 };
+const emailRegExp =
+  /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
 
 const contactSchema = Schema(
   {
@@ -20,6 +22,7 @@ const contactSchema = Schema(
     },
     email: {
       type: String,
+      match: emailRegExp,
     },
     phone: {
       type: String,
@@ -28,7 +31,12 @@ const contactSchema = Schema(
       type: Boolean,
       default: false,
     },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
   },
+
   { versionKey: false, timestamps: true }
 );
 
