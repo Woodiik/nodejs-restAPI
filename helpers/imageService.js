@@ -1,6 +1,6 @@
 const Jimp = require("jimp");
 const path = require("path");
-async function resizeAvatar(avatarPath, userId, originalName) {
+const resizeAvatar = async (avatarPath, userId, originalName) => {
   try {
     const image = await Jimp.read(avatarPath);
 
@@ -14,11 +14,12 @@ async function resizeAvatar(avatarPath, userId, originalName) {
 
     await image.writeAsync(savedImagePath);
 
-    return savedImagePath;
+    const avatarURL = `/avatars/${uniqueName}`;
+
+    return avatarURL;
   } catch (error) {
     console.error("Image edit error:", error);
     throw error;
   }
-}
-
+};
 module.exports = resizeAvatar;

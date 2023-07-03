@@ -76,8 +76,6 @@ const updateAvatar = async (req, res) => {
 
   const resizedImagePath = await resizeAvatar(tempUpload, _id, originalname);
 
-  await fs.rename(resizedImagePath, resizedImagePath);
-
   await User.findByIdAndUpdate(_id, { avatarURL: resizedImagePath });
 
   await fs.unlink(tempUpload);
