@@ -1,7 +1,10 @@
 const { ctrlWrapper } = require("../helpers");
 const { User } = require("../models/user");
 const bcrypt = require("bcrypt");
+const gravatar = require("gravatar");
 const jwt = require("jsonwebtoken");
+const fs = require("fs/promises");
+const resizeAvatar = require("../helpers/imageService");
 require("dotenv").config();
 const { SECRET_KEY } = process.env;
 
@@ -12,7 +15,12 @@ const register = async (req, res) => {
     return res.status(409).json({ message: "Email in use" });
   }
   const hashPassword = await bcrypt.hash(password, 10);
-  const newUser = await User.create({ ...req.body, password: hashPassword });
+  const avatarURL = gravatar.url(email);
+  const newUser = await User.create({
+    ...req.body,
+    password: hashPassword,
+    avatarURL,
+  });
   return res.status(201).json({
     user: {
       email: newUser.email,
@@ -62,10 +70,24 @@ const logout = async (req, res) => {
   await User.findByIdAndUpdate(_id, { token: "" });
   return res.status(204).json({ message: "complete" });
 };
+const updateAvatar = async (req, res) => {
+  const { _id } = req.user;
+  const { path: tempUpload, originalname } = req.file;
 
+  const resizedImagePath = await resizeAvatar(tempUpload, _id, originalname);
+
+  await User.findByIdAndUpdate(_id, { avatarURL: resizedImagePath });
+
+  await fs.unlink(tempUpload);
+
+  res.status(200).json({
+    avatarURL: resizedImagePath,
+  });
+};
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
+  updateAvatar: ctrlWrapper(updateAvatar),
 };
