@@ -5,6 +5,8 @@ const {
   getCurrent,
   logout,
   updateAvatar,
+  verifyEmail,
+  resendVerifyEmail,
 } = require("../../controllers/auth");
 const {
   validateBodyOnAuth,
@@ -17,6 +19,14 @@ const router = express.Router();
 
 router.post("/register", validateBodyOnAuth(schemas.registerSchema), register);
 module.exports = router;
+
+router.get("/verify/:verificationToken", verifyEmail);
+
+router.post(
+  "/verify",
+  validateBodyOnAuth(schemas.emailSchema),
+  resendVerifyEmail
+);
 
 router.post("/login", validateBodyOnAuth(schemas.registerSchema), login);
 module.exports = router;
